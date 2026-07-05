@@ -1,6 +1,16 @@
 from fastapi import FastAPI
 
+from app.database import Base, engine
+from app.models import Course
 from app.routers.courses import router as courses_router
+
+
+# Course 모델을 Python이 불러오도록 명시적으로 참조
+_ = Course
+
+# 아직 Alembic을 배우기 전이므로 자동으로 테이블 생성
+Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI(
     title="StudyHelper API",
@@ -8,7 +18,9 @@ app = FastAPI(
     version="0.1.0",
 )
 
+
 app.include_router(courses_router)
+
 
 @app.get("/")
 def root():
@@ -17,9 +29,10 @@ def root():
         "docs": "/docs",
     }
 
+
 @app.get("/health")
 def health():
-    return{
+    return {
         "status": "ok",
-        "service" : "StudyHelper",
+        "service": "StudyHelper",
     }
