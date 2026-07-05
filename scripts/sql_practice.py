@@ -6,7 +6,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parents[1]
 
 # 실제 데이터베이스 파일 경로
-DB_PATH = BASE_DIR / "data" / "studyhelper.db"
+DB_PATH = BASE_DIR / "data" / "sql_practice.db"
 
 
 def print_courses(
