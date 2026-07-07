@@ -85,6 +85,9 @@ StudyHelper는 학습자료를 한곳에 모아 저장하고 검색과 퀴즈 �
 - 메모리 기반 과목 생성 및 조회 API 구현 완료
 - Router, Schema, Service 계층 분리 완료
 - SQLite를 이용한 기본 SQL CRUD 실습 완료
+- SQLAlchemy 기반 Course ORM 모델 구현 완료
+- 과목 API를 메모리 저장 방식에서 SQLite DB 저장 방식으로 변경
+- 과목 생성, 조회, 수정, 삭제 API 구현 완료
 
 ## 프로젝트 구조
 
