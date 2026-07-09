@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 
 from app.database import Base, engine
-from app.models import Course
+from app.models import Course, Document
 from app.routers.courses import router as courses_router
+from app.routers.documents import router as documents_router
 
 
-# Course 모델을 Python이 불러오도록 명시적으로 참조
+# ORM 모델을 Python이 불러오도록 명시적으로 참조
 _ = Course
+_ = Document
 
 # 아직 Alembic을 배우기 전이므로 자동으로 테이블 생성
 Base.metadata.create_all(bind=engine)
@@ -20,6 +22,7 @@ app = FastAPI(
 
 
 app.include_router(courses_router)
+app.include_router(documents_router)
 
 
 @app.get("/")
