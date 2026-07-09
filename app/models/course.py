@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import DateTime, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
@@ -30,4 +30,10 @@ class Course(Base):
         DateTime,
         nullable=False,
         server_default=func.current_timestamp(),
+    )
+
+    documents = relationship(
+        "Document",
+        back_populates="course",
+        cascade="all, delete-orphan",
     )

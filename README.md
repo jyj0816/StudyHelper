@@ -88,6 +88,9 @@ StudyHelper는 학습자료를 한곳에 모아 저장하고 검색과 퀴즈 �
 - SQLAlchemy 기반 Course ORM 모델 구현 완료
 - 과목 API를 메모리 저장 방식에서 SQLite DB 저장 방식으로 변경
 - 과목 생성, 조회, 수정, 삭제 API 구현 완료
+- Document ORM 모델 구현 완료
+- 학습자료 생성, 조회, 검색, 수정, 삭제 API 구현 완료
+- Course와 Document의 1:N 관계 설정 완료
 
 ## 프로젝트 구조
 
