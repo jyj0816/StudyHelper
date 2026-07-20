@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}자료 수정 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>학습자료 수정</h2>
+</section>
+
+<section class="card">
+    <form method="post" action="/web/documents/{{ document.id }}/edit" class="form">
+        <label>
+            제목
+            <input type="text" name="title" value="{{ document.title }}" required>
+        </label>
+
+        <label>
+            과목
+            <select name="course_id" required>
+                {% for course in courses %}
+                    <option value="{{ course.id }}"
+                        {% if document.course_id == course.id %}selected{% endif %}
+                    >
+                        {{ course.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            태그
+            <input type="text" name="tags" value="{{ document.tags or '' }}">
+        </label>
+
+        <label>
+            내용
+            <textarea name="content" rows="10" required>{{ document.content }}</textarea>
+        </label>
+
+        <button type="submit">수정 완료</button>
+    </form>
+</section>
+
+<a href="/web/documents/{{ document.id }}">← 상세로 돌아가기</a>
+{% endblock %}

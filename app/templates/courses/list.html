@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}과목 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>과목 관리</h2>
+    <p>학습자료를 분류할 과목을 관리합니다.</p>
+</section>
+
+<section class="card">
+    <h3>과목 추가</h3>
+
+    <form method="post" action="/web/courses" class="form">
+        <label>
+            과목명
+            <input type="text" name="name" placeholder="예: 데이터통신" required>
+        </label>
+
+        <label>
+            설명
+            <input type="text" name="description" placeholder="예: 네트워크와 프로토콜">
+        </label>
+
+        <button type="submit">과목 추가</button>
+    </form>
+</section>
+
+<section class="card">
+    <h3>과목 목록</h3>
+
+    {% if courses %}
+        <ul class="item-list">
+            {% for course in courses %}
+                <li>
+                    <div>
+                        <strong>{{ course.name }}</strong>
+                        {% if course.description %}
+                            <p class="muted">{{ course.description }}</p>
+                        {% endif %}
+                    </div>
+
+                    <form method="post" action="/web/courses/{{ course.id }}/delete">
+                        <button type="submit" class="danger">삭제</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">아직 등록된 과목이 없습니다.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}자료 추가 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>학습자료 추가</h2>
+    <p>과목을 선택하고 학습 내용을 저장합니다.</p>
+</section>
+
+<section class="card">
+    {% if courses %}
+        <form method="post" action="/web/documents" class="form">
+            <label>
+                제목
+                <input type="text" name="title" placeholder="예: TCP 흐름제어" required>
+            </label>
+
+            <label>
+                과목
+                <select name="course_id" required>
+                    {% for course in courses %}
+                        <option value="{{ course.id }}">{{ course.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                태그
+                <input type="text" name="tags" placeholder="예: TCP, 네트워크, 흐름제어">
+            </label>
+
+            <label>
+                내용
+                <textarea name="content" rows="10" placeholder="학습 내용을 입력하세요." required></textarea>
+            </label>
+
+            <button type="submit">저장</button>
+        </form>
+    {% else %}
+        <p class="muted">먼저 과목을 생성해야 학습자료를 추가할 수 있습니다.</p>
+        <a class="button-link" href="/web/courses">과목 만들기</a>
+    {% endif %}
+</section>
+{% endblock %}
