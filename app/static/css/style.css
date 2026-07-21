@@ -170,3 +170,31 @@ button.danger {
     font-family: inherit;
     line-height: 1.7;
 }
+
+.auth-card {
+    max-width: 520px;
+}
+
+.error-message {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.nav-user {
+    color: #f9fafb;
+    font-weight: bold;
+}
+
+.nav-form {
+    margin: 0;
+}
+
+.nav-button {
+    background: transparent;
+    color: #d1d5db;
+    padding: 0;
+}

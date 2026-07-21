@@ -11,7 +11,8 @@ from app.database import get_db
 from app.schemas.course import CourseCreate
 from app.schemas.document import DocumentCreate, DocumentUpdate
 from app.services import course_service, document_service
-
+from app.models import User
+from app.services import course_service, document_service, user_service
 
 router = APIRouter(
     tags=["web"],
@@ -24,6 +25,31 @@ templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
 DbSession = Annotated[Session, Depends(get_db)]
 
+def get_current_user(
+    request: Request,
+    db: Session,
+) -> User | None:
+    user_id = request.session.get("user_id")
+
+    if user_id is None:
+        return None
+
+    try:
+        user_id = int(user_id)
+    except ValueError:
+        return None
+
+    return user_service.get_user_by_id(
+        db=db,
+        user_id=user_id,
+    )
+
+
+def redirect_to_login() -> RedirectResponse:
+    return RedirectResponse(
+        url="/login",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 @router.get(
     "/dashboard",
@@ -33,6 +59,14 @@ def dashboard(
     request: Request,
     db: DbSession,
 ):
+    current_user = get_current_user(
+        request=request,
+        db=db,
+    )
+
+    if current_user is None:
+        return redirect_to_login()
+
     courses = course_service.get_courses(
         db=db,
         limit=100,
@@ -48,6 +82,7 @@ def dashboard(
         context={
             "courses": courses,
             "documents": documents,
+            "current_user": current_user,
         },
     )
 

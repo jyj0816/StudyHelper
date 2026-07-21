@@ -13,6 +13,16 @@
             <a href="/web/courses">과목</a>
             <a href="/web/documents">학습자료</a>
             <a href="/docs">API 문서</a>
+
+            {% if current_user is defined and current_user %}
+                <span class="nav-user">{{ current_user.username }}</span>
+                <form method="post" action="/logout" class="nav-form">
+                    <button type="submit" class="nav-button">로그아웃</button>
+                </form>
+            {% else %}
+                <a href="/login">로그인</a>
+                <a href="/register">회원가입</a>
+            {% endif %}
         </nav>
     </header>
 
