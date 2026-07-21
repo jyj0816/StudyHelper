@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}회원가입 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>회원가입</h2>
+    <p>StudyHelper 계정을 생성합니다.</p>
+</section>
+
+<section class="card auth-card">
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="/register" class="form">
+        <label>
+            이메일
+            <input type="email" name="email" placeholder="student@example.com" required>
+        </label>
+
+        <label>
+            사용자 이름
+            <input type="text" name="username" placeholder="예: jyj0816" required>
+        </label>
+
+        <label>
+            비밀번호
+            <input type="password" name="password" minlength="8" required>
+        </label>
+
+        <label>
+            비밀번호 확인
+            <input type="password" name="password_confirm" minlength="8" required>
+        </label>
+
+        <button type="submit">회원가입</button>
+    </form>
+
+    <p class="muted">
+        이미 계정이 있나요?
+        <a href="/login">로그인</a>
+    </p>
+</section>
+{% endblock %}

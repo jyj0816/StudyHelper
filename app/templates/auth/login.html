@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}로그인 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>로그인</h2>
+    <p>계정으로 로그인합니다.</p>
+</section>
+
+<section class="card auth-card">
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="/login" class="form">
+        <label>
+            이메일
+            <input type="email" name="email" required>
+        </label>
+
+        <label>
+            비밀번호
+            <input type="password" name="password" required>
+        </label>
+
+        <button type="submit">로그인</button>
+    </form>
+
+    <p class="muted">
+        아직 계정이 없나요?
+        <a href="/register">회원가입</a>
+    </p>
+</section>
+{% endblock %}
