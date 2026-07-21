@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}학습자료 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title row-between">
+    <div>
+        <h2>학습자료</h2>
+        <p>제목, 본문, 태그로 자료를 검색합니다.</p>
+    </div>
+    <a class="button-link" href="/web/documents/new">자료 추가</a>
+</section>
+
+<section class="card">
+    <h3>검색</h3>
+
+    <form method="get" action="/web/documents" class="form horizontal">
+        <input type="text" name="q" value="{{ q }}" placeholder="검색어">
+
+        <select name="course_id">
+            <option value="">전체 과목</option>
+            {% for course in courses %}
+                <option value="{{ course.id }}"
+                    {% if selected_course_id == course.id %}selected{% endif %}
+                >
+                    {{ course.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">검색</button>
+    </form>
+</section>
+
+<section class="card">
+    <h3>자료 목록</h3>
+
+    {% if documents %}
+        <ul class="item-list">
+            {% for document in documents %}
+                <li>
+                    <div>
+                        <a href="/web/documents/{{ document.id }}">
+                            <strong>{{ document.title }}</strong>
+                        </a>
+                        <p class="muted">
+                            과목 ID: {{ document.course_id }}
+                            {% if document.tags %}
+                                · {{ document.tags }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">검색 결과 또는 등록된 자료가 없습니다.</p>
+    {% endif %}
+</section>
+{% endblock %}

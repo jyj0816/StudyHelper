@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}StudyHelper{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1><a href="/dashboard">StudyHelper</a></h1>
+        <nav>
+            <a href="/dashboard">대시보드</a>
+            <a href="/web/courses">과목</a>
+            <a href="/web/documents">학습자료</a>
+            <a href="/docs">API 문서</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

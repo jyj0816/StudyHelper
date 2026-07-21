@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}대시보드 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>대시보드</h2>
+    <p>과목과 학습자료를 한눈에 확인합니다.</p>
+</section>
+
+<section class="stats">
+    <div class="stat-card">
+        <span class="stat-label">과목 수</span>
+        <strong>{{ courses | length }}</strong>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">최근 학습자료</span>
+        <strong>{{ documents | length }}</strong>
+    </div>
+</section>
+
+<section class="card">
+    <h3>최근 학습자료</h3>
+
+    {% if documents %}
+        <ul class="item-list">
+            {% for document in documents %}
+                <li>
+                    <a href="/web/documents/{{ document.id }}">{{ document.title }}</a>
+                    <span class="muted">과목 ID: {{ document.course_id }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">아직 등록된 학습자료가 없습니다.</p>
+    {% endif %}
+</section>
+{% endblock %}
