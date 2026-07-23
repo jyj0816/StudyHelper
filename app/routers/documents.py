@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.dependencies.auth import require_current_user
+from app.models import User
 from app.schemas.document import DocumentCreate, DocumentResponse, DocumentUpdate
 from app.services import document_service
 
@@ -13,8 +15,8 @@ router = APIRouter(
     tags=["documents"],
 )
 
-
 DbSession = Annotated[Session, Depends(get_db)]
+CurrentUser = Annotated[User, Depends(require_current_user)]
 
 
 @router.post(
@@ -25,11 +27,13 @@ DbSession = Annotated[Session, Depends(get_db)]
 def create_document(
     document: DocumentCreate,
     db: DbSession,
+    current_user: CurrentUser,
 ):
     try:
         return document_service.create_document(
             db=db,
             document=document,
+            user_id=current_user.id,
         )
     except ValueError as error:
         raise HTTPException(
@@ -42,27 +46,17 @@ def create_document(
     "",
     response_model=list[DocumentResponse],
 )
-def get_documents(
+def read_documents(
     db: DbSession,
-    q: Annotated[
-        str | None,
-        Query(min_length=1, max_length=100),
-    ] = None,
-    course_id: Annotated[
-        int | None,
-        Query(gt=0),
-    ] = None,
-    skip: Annotated[
-        int,
-        Query(ge=0),
-    ] = 0,
-    limit: Annotated[
-        int,
-        Query(ge=1, le=100),
-    ] = 10,
+    current_user: CurrentUser,
+    q: str | None = Query(default=None),
+    course_id: int | None = Query(default=None),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=10, ge=1, le=100),
 ):
     return document_service.get_documents(
         db=db,
+        user_id=current_user.id,
         q=q,
         course_id=course_id,
         skip=skip,
@@ -74,13 +68,15 @@ def get_documents(
     "/{document_id}",
     response_model=DocumentResponse,
 )
-def get_document(
+def read_document(
     document_id: int,
     db: DbSession,
+    current_user: CurrentUser,
 ):
     document = document_service.get_document_by_id(
         db=db,
         document_id=document_id,
+        user_id=current_user.id,
     )
 
     if document is None:
@@ -100,12 +96,14 @@ def update_document(
     document_id: int,
     document_update: DocumentUpdate,
     db: DbSession,
+    current_user: CurrentUser,
 ):
     try:
         document = document_service.update_document(
             db=db,
             document_id=document_id,
             document_update=document_update,
+            user_id=current_user.id,
         )
     except ValueError as error:
         raise HTTPException(
@@ -124,21 +122,24 @@ def update_document(
 
 @router.delete(
     "/{document_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_document(
     document_id: int,
     db: DbSession,
+    current_user: CurrentUser,
 ):
-    is_deleted = document_service.delete_document(
+    deleted = document_service.delete_document(
         db=db,
         document_id=document_id,
+        user_id=current_user.id,
     )
 
-    if not is_deleted:
+    if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="학습자료를 찾을 수 없습니다.",
         )
 
-    return None
+    return {
+        "message": "학습자료가 삭제되었습니다.",
+    }

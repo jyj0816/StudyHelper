@@ -8,11 +8,13 @@ from app.schemas.course import CourseCreate, CourseUpdate
 def create_course(
     db: Session,
     course: CourseCreate,
+    user_id: int,
 ) -> Course:
-    """새로운 과목을 DB에 생성한다."""
-
     existing_course = db.scalar(
-        select(Course).where(Course.name == course.name)
+        select(Course).where(
+            Course.name == course.name,
+            Course.user_id == user_id,
+        )
     )
 
     if existing_course is not None:
@@ -21,6 +23,7 @@ def create_course(
     new_course = Course(
         name=course.name,
         description=course.description,
+        user_id=user_id,
     )
 
     db.add(new_course)
@@ -29,15 +32,17 @@ def create_course(
 
     return new_course
 
+
 def get_courses(
     db: Session,
+    user_id: int,
     q: str | None = None,
     skip: int = 0,
     limit: int = 10,
 ) -> list[Course]:
-    """과목 목록을 검색하고 페이지 단위로 반환"""
-
-    statement = select(Course)
+    statement = select(Course).where(
+        Course.user_id == user_id,
+    )
 
     if q is not None:
         keyword = f"%{q}%"
@@ -60,20 +65,27 @@ def get_courses(
 def get_course_by_id(
     db: Session,
     course_id: int,
+    user_id: int,
 ) -> Course | None:
-    """ID와 일치하는 과목을 반환"""
-
-    return db.get(Course, course_id)
+    return db.scalar(
+        select(Course).where(
+            Course.id == course_id,
+            Course.user_id == user_id,
+        )
+    )
 
 
 def update_course(
     db: Session,
     course_id: int,
     course_update: CourseUpdate,
+    user_id: int,
 ) -> Course | None:
-    """과목 정보 수정"""
-
-    course = get_course_by_id(db, course_id)
+    course = get_course_by_id(
+        db=db,
+        course_id=course_id,
+        user_id=user_id,
+    )
 
     if course is None:
         return None
@@ -87,6 +99,7 @@ def update_course(
         existing_course = db.scalar(
             select(Course).where(
                 Course.name == update_data["name"],
+                Course.user_id == user_id,
                 Course.id != course_id,
             )
         )
@@ -106,10 +119,13 @@ def update_course(
 def delete_course(
     db: Session,
     course_id: int,
+    user_id: int,
 ) -> bool:
-    """과목 삭제"""
-
-    course = get_course_by_id(db, course_id)
+    course = get_course_by_id(
+        db=db,
+        course_id=course_id,
+        user_id=user_id,
+    )
 
     if course is None:
         return False

@@ -11,18 +11,32 @@
 <section class="card">
     <h3>과목 추가</h3>
 
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
+    {% endif %}
+
     <form method="post" action="/web/courses" class="form">
         <label>
             과목명
-            <input type="text" name="name" placeholder="예: 데이터통신" required>
+            <input type="text" name="name" placeholder="예: 운영체제" required>
         </label>
 
         <label>
             설명
-            <input type="text" name="description" placeholder="예: 네트워크와 프로토콜">
+            <textarea name="description" rows="3" placeholder="과목 설명을 입력하세요."></textarea>
         </label>
 
         <button type="submit">과목 추가</button>
+    </form>
+</section>
+
+<section class="card">
+    <h3>과목 검색</h3>
+
+    <form method="get" action="/web/courses" class="search-form">
+        <input type="text" name="q" value="{{ q }}" placeholder="과목명 또는 설명 검색">
+        <button type="submit">검색</button>
+        <a href="/web/courses" class="button-link">초기화</a>
     </form>
 </section>
 
@@ -35,19 +49,24 @@
                 <li>
                     <div>
                         <strong>{{ course.name }}</strong>
+
                         {% if course.description %}
-                            <p class="muted">{{ course.description }}</p>
+                            <p>{{ course.description }}</p>
+                        {% else %}
+                            <p class="muted">설명이 없습니다.</p>
                         {% endif %}
                     </div>
 
                     <form method="post" action="/web/courses/{{ course.id }}/delete">
-                        <button type="submit" class="danger">삭제</button>
+                        <button type="submit" onclick="return confirm('이 과목과 연결된 학습자료가 함께 삭제됩니다. 삭제할까요?')">
+                            삭제
+                        </button>
                     </form>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p class="muted">아직 등록된 과목이 없습니다.</p>
+        <p class="muted">등록된 과목이 없습니다.</p>
     {% endif %}
 </section>
 {% endblock %}

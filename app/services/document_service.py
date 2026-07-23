@@ -8,10 +8,14 @@ from app.schemas.document import DocumentCreate, DocumentUpdate
 def create_document(
     db: Session,
     document: DocumentCreate,
+    user_id: int,
 ) -> Document:
-    """새로운 학습자료를 데이터베이스에 생성한다."""
-
-    course = db.get(Course, document.course_id)
+    course = db.scalar(
+        select(Course).where(
+            Course.id == document.course_id,
+            Course.user_id == user_id,
+        )
+    )
 
     if course is None:
         raise ValueError("존재하지 않는 과목입니다.")
@@ -21,6 +25,7 @@ def create_document(
         content=document.content,
         tags=document.tags,
         course_id=document.course_id,
+        user_id=user_id,
     )
 
     db.add(new_document)
@@ -32,17 +37,20 @@ def create_document(
 
 def get_documents(
     db: Session,
+    user_id: int,
     q: str | None = None,
     course_id: int | None = None,
     skip: int = 0,
     limit: int = 10,
 ) -> list[Document]:
-    """학습자료 목록을 검색하고 페이지 단위로 반환한다."""
-
-    statement = select(Document)
+    statement = select(Document).where(
+        Document.user_id == user_id,
+    )
 
     if course_id is not None:
-        statement = statement.where(Document.course_id == course_id)
+        statement = statement.where(
+            Document.course_id == course_id,
+        )
 
     if q is not None:
         keyword = f"%{q}%"
@@ -66,22 +74,26 @@ def get_documents(
 def get_document_by_id(
     db: Session,
     document_id: int,
+    user_id: int,
 ) -> Document | None:
-    """ID와 일치하는 학습자료를 반환한다."""
-
-    return db.get(Document, document_id)
+    return db.scalar(
+        select(Document).where(
+            Document.id == document_id,
+            Document.user_id == user_id,
+        )
+    )
 
 
 def update_document(
     db: Session,
     document_id: int,
     document_update: DocumentUpdate,
+    user_id: int,
 ) -> Document | None:
-    """학습자료를 수정한다."""
-
     document = get_document_by_id(
         db=db,
         document_id=document_id,
+        user_id=user_id,
     )
 
     if document is None:
@@ -95,7 +107,12 @@ def update_document(
         if course_id is None:
             raise ValueError("과목 ID는 비울 수 없습니다.")
 
-        course = db.get(Course, course_id)
+        course = db.scalar(
+            select(Course).where(
+                Course.id == course_id,
+                Course.user_id == user_id,
+            )
+        )
 
         if course is None:
             raise ValueError("존재하지 않는 과목입니다.")
@@ -112,12 +129,12 @@ def update_document(
 def delete_document(
     db: Session,
     document_id: int,
+    user_id: int,
 ) -> bool:
-    """학습자료를 삭제한다."""
-
     document = get_document_by_id(
         db=db,
         document_id=document_id,
+        user_id=user_id,
     )
 
     if document is None:
