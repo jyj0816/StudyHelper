@@ -64,3 +64,4 @@ class DocumentResponse(BaseModel):
     content: str
     tags: str | None = None
     course_id: int
+    user_id: int

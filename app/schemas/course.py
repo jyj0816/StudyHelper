@@ -36,3 +36,4 @@ class CourseResponse(BaseModel):
     id: int
     name: str
     description: str | None = None
+    user_id: int

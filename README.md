@@ -1,78 +1,137 @@
 # StudyHelper
 
-강의 내용을 과목별로 관리하고, 간단한 AI를 통해 분류하며학습자료를 기반으로 퀴즈를 만들 수 있는 웹서비스입니다.
+강의 내용과 학습자료를 과목별로 관리하고, 검색과 향후 AI 기능을 통해 시험 공부에 다시 활용할 수 있도록 만드는 웹서비스입니다.
 
 ## 프로젝트 소개
 
-대학교에서 여러 전공과목을 수강하다 보면 강의내용, 시험 정리, 과제 메모가 여러 파일과 프로그램에 흩어지게 됩니다.
+대학교에서 여러 전공과목을 수강하다 보면 강의 내용, 시험 정리, 과제 메모가 여러 파일과 프로그램에 흩어지게 됩니다.
 
-StudyHelper는 학습자료를 한곳에 모아 저장하고 검색과 퀴즈 기능을 통해 시험 공부에 다시 활용할 수 있도록 하는 프로젝트입니다.
+StudyHelper는 학습자료를 한곳에 모아 저장하고, 과목별 분류와 검색 기능을 통해 필요한 내용을 쉽게 다시 찾아볼 수 있도록 하는 프로젝트입니다.
+
+향후에는 학습자료를 기반으로 AI 과목 추천, 퀴즈 생성, 오답 노트 기능까지 확장하는 것을 목표로 합니다.
 
 ## 주요 기능
+
 - 회원가입 및 로그인
 - 로그아웃
 - 세션 쿠키 기반 로그인 상태 유지
-- 과목 생성, 조회, 검색, 수정, 삭제
-- 학습자료 생성, 조회, 검색, 수정, 삭제
+- 비밀번호 해시 저장
+- 사용자별 과목 관리
+- 사용자별 학습자료 관리
+- 과목 생성, 조회, 검색, 수정, 삭제 API
+- 학습자료 생성, 조회, 검색, 수정, 삭제 API
 - 과목별 학습자료 필터링
+- 제목, 내용, 태그 기반 학습자료 검색
 - 브라우저 기반 대시보드
 - 브라우저 기반 과목 관리 화면
 - 브라우저 기반 학습자료 관리 화면
-- 비밀번호 해시 저장
+- 과목 삭제 시 연결된 학습자료 자동 삭제
+- 로그인하지 않은 사용자의 주요 화면 접근 제한
+
+## 향후 구현 예정 기능
+
+- AI 과목 추천
+- 학습자료 기반 퀴즈 생성
+- 퀴즈 풀이 및 채점
+- 오답 노트
+- 학습 통계
+- 과목 수정 웹 화면
+- 테스트 코드 작성
+- Docker 기반 실행 환경 구성
+- GitHub Actions 기반 자동 검사
+- PostgreSQL 연동
 
 ## 기술 스택
 
 ### Backend
 
 - Python
-- FASTAPI
+- FastAPI
 - SQLAlchemy
 - SQLite
-- PostgreSQL
+- Pydantic
+- Uvicorn
 
 ### Frontend
 
 - HTML
 - CSS
-- JavaScript
 - Jinja2
-
-### Machine Learning
-
-- pandas
-- scikit-learn
-- TF-IDF
-- Logistic Regression
 
 ### Development
 
 - Git
 - GitHub
+- Python 가상환경
+
+### 향후 사용 예정
+
+- PostgreSQL
 - pytest
 - Docker
 - GitHub Actions
+- pandas
+- scikit-learn
+- TF-IDF
+- Logistic Regression
 
 ## 주요 사용자 흐름
 
 1. 회원가입 및 로그인
 2. 과목 생성
 3. 학습자료 작성
-4. AI 과목 추천
-5. 학습자료 저장 및 검색
-6. 퀴즈 생성
-7. 퀴즈 풀이 및 채점
-8. 오답 노트 확인
+4. 과목별 학습자료 조회
+5. 제목, 내용, 태그 기반 학습자료 검색
+6. 학습자료 수정 및 삭제
+7. 과목 삭제 시 연결된 학습자료 함께 삭제
+8. 로그아웃
 
 ## 개발 일정
 
 - 1주차: 프로젝트 기획 및 FastAPI 기초 완료
 - 2주차: 데이터베이스 및 과목/학습자료 CRUD 완료
-- 3주차: 웹 화면 및 기본 인증 기능 진행 중
-- 다음 목표: 사용자별 과목/학습자료 데이터 분리
+- 3주차: 웹 화면, 기본 인증, 사용자별 데이터 분리 완료
+- 다음 목표: 학습자료 검색 기능 개선 및 기본 테스트 코드 작성
 
 ## 실행 방법
 
-개발이 진행되면서 작성할 예정
+### 1. 저장소 클론
+
+```bash
+git clone https://github.com/jyj0816/StudyHelper.git
+cd StudyHelper
+```
+
+### 2. 가상환경 생성 및 실행
+
+```bash
+python -m venv venv
+source venv/Scripts/activate
+```
+
+### 3. 패키지 설치
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. 서버 실행
+
+```bash
+python -m uvicorn app.main:app --reload
+```
+
+### 5. 브라우저 접속
+
+```text
+http://127.0.0.1:8000/dashboard
+```
+
+API 문서:
+
+```text
+http://127.0.0.1:8000/docs
+```
 
 ## 프로젝트 상태
 
@@ -95,15 +154,81 @@ StudyHelper는 학습자료를 한곳에 모아 저장하고 검색과 퀴즈 �
 - 세션 쿠키 기반 로그인 상태 관리 구현 완료
 - 비로그인 사용자의 대시보드 접근 제한 구현 완료
 - PBKDF2 기반 비밀번호 해시 처리 구현 완료
+- 사용자별 과목 데이터 분리 구현 완료
+- 사용자별 학습자료 데이터 분리 구현 완료
+- 로그인하지 않은 사용자의 과목/학습자료 화면 접근 제한 구현 완료
+- 과목 삭제 시 연결된 학습자료 함께 삭제 처리 완료
+- 사용자별 동일 과목명 생성 가능하도록 수정 완료
 
 ## 프로젝트 구조
 
 ```text
 app/
 ├─ main.py
+├─ database.py
+├─ security.py
+├─ dependencies/
+│  ├─ __init__.py
+│  └─ auth.py
+├─ models/
+│  ├─ __init__.py
+│  ├─ user.py
+│  ├─ course.py
+│  └─ document.py
 ├─ routers/
-│  └─ courses.py
+│  ├─ auth.py
+│  ├─ courses.py
+│  ├─ documents.py
+│  └─ web.py
 ├─ schemas/
-│  └─ course.py
-└─ services/
-   └─ course_service.py
+│  ├─ user.py
+│  ├─ course.py
+│  └─ document.py
+├─ services/
+│  ├─ user_service.py
+│  ├─ course_service.py
+│  └─ document_service.py
+├─ templates/
+│  ├─ base.html
+│  ├─ dashboard.html
+│  ├─ auth/
+│  │  ├─ login.html
+│  │  └─ register.html
+│  ├─ courses/
+│  │  └─ list.html
+│  └─ documents/
+│     ├─ list.html
+│     ├─ new.html
+│     ├─ detail.html
+│     └─ edit.html
+└─ static/
+   └─ css/
+      └─ style.css
+```
+
+## 브랜치 전략
+
+- `main`: 완료된 기능만 반영하는 기본 브랜치
+- 기능 개발 브랜치: `feat/...`
+- 기능 단위로 Pull Request를 생성하고 merge
+
+## 최근 작업 내용
+
+### 기본 인증 기능
+
+- User 모델 추가
+- 회원가입 기능 추가
+- 로그인 기능 추가
+- 로그아웃 기능 추가
+- 세션 기반 로그인 상태 관리
+- 비밀번호 PBKDF2 해시 저장
+- 비로그인 사용자의 대시보드 접근 제한
+
+### 사용자별 데이터 분리
+
+- Course 모델에 `user_id` 추가
+- Document 모델에 `user_id` 추가
+- 사용자별 과목 조회/생성/수정/삭제 처리
+- 사용자별 학습자료 조회/생성/수정/삭제 처리
+- 사용자별 동일 과목명 생성 가능
+- 과목 삭제 시 연결된 학습자료 함께 삭제
