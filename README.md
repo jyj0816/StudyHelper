@@ -198,7 +198,8 @@ app/
 │  │  ├─ login.html
 │  │  └─ register.html
 │  ├─ courses/
-│  │  └─ list.html
+│  │  ├─ list.html
+|  |  └─ edit.html
 │  └─ documents/
 │     ├─ list.html
 │     ├─ new.html
@@ -207,12 +208,15 @@ app/
 └─ static/
    └─ css/
       └─ style.css
+
+      
 tests/
 ├─ __init__.py
 ├─ conftest.py
 ├─ test_security.py
 ├─ test_auth.py
-└─ test_course_isolation.py      
+├─ test_course_isolation.py
+└─ test_course_edit_web.py      
 ```
 
 ## 브랜치 전략
@@ -258,6 +262,10 @@ pytest를 사용해 주요 기능을 검증
 - 사용자별 과목 데이터 분리 테스트
 - 사용자별 동일 과목명 생성 가능 테스트
 - 같은 사용자의 중복 과목명 생성 실패 테스트
+- 과목 수정 웹 페이지 접근 테스트
+- 과목 수정 성공 테스트
+- 중복 과목명 수정 실패 테스트
+- 다른 사용자의 과목 수정 화면 접근 차단 테스트
 
 테스트 실행:
 

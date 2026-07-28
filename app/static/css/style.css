@@ -198,3 +198,9 @@ button.danger {
     color: #d1d5db;
     padding: 0;
 }
+
+.actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}

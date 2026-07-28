@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}과목 수정 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>과목 수정</h2>
+    <p>과목명과 설명을 수정합니다.</p>
+</section>
+
+<section class="card">
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="/web/courses/{{ course.id }}/edit" class="form">
+        <label>
+            과목명
+            <input type="text" name="name" value="{{ course.name }}" required>
+        </label>
+
+        <label>
+            설명
+            <textarea name="description" rows="4">{{ course.description or "" }}</textarea>
+        </label>
+
+        <button type="submit">수정 완료</button>
+        <a href="/web/courses" class="button-link">목록으로</a>
+    </form>
+</section>
+{% endblock %}
