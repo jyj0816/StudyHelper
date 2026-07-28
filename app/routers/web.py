@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models import User
+from app.schemas.course import CourseCreate, CourseUpdate
 from app.schemas.document import DocumentCreate, DocumentUpdate
 from app.services import course_service, document_service
 
@@ -139,7 +140,6 @@ def create_course_from_web(
         return current_user
 
     try:
-        from app.schemas.course import CourseCreate
 
         course_service.create_course(
             db=db,
@@ -309,6 +309,102 @@ def create_document_from_web(
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
+@router.get(
+    "/web/courses/{course_id}/edit",
+    response_class=HTMLResponse,
+)
+def edit_course_page(
+    course_id: int,
+    request: Request,
+    db: DbSession,
+):
+    current_user = require_web_user(
+        request=request,
+        db=db,
+    )
+
+    if isinstance(current_user, RedirectResponse):
+        return current_user
+
+    course = course_service.get_course_by_id(
+        db=db,
+        course_id=course_id,
+        user_id=current_user.id,
+    )
+
+    if course is None:
+        return RedirectResponse(
+            url="/web/courses",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="courses/edit.html",
+        context={
+            "course": course,
+            "error": None,
+            "current_user": current_user,
+        },
+    )
+
+
+@router.post(
+    "/web/courses/{course_id}/edit",
+)
+def update_course_from_web(
+    course_id: int,
+    request: Request,
+    db: DbSession,
+    name: Annotated[str, Form()],
+    description: Annotated[str | None, Form()] = None,
+):
+    current_user = require_web_user(
+        request=request,
+        db=db,
+    )
+
+    if isinstance(current_user, RedirectResponse):
+        return current_user
+
+    try:
+        course = course_service.update_course(
+            db=db,
+            course_id=course_id,
+            course_update=CourseUpdate(
+                name=name,
+                description=description,
+            ),
+            user_id=current_user.id,
+        )
+    except ValueError as error:
+        old_course = course_service.get_course_by_id(
+            db=db,
+            course_id=course_id,
+            user_id=current_user.id,
+        )
+
+        return templates.TemplateResponse(
+            request=request,
+            name="courses/edit.html",
+            context={
+                "course": old_course,
+                "error": str(error),
+                "current_user": current_user,
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if course is None:
+        return RedirectResponse(
+            url="/web/courses",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    return RedirectResponse(
+        url="/web/courses",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 
 @router.post(
