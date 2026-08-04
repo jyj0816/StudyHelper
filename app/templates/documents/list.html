@@ -3,58 +3,103 @@
 {% block title %}학습자료 - StudyHelper{% endblock %}
 
 {% block content %}
-<section class="page-title row-between">
-    <div>
-        <h2>학습자료</h2>
-        <p>제목, 본문, 태그로 자료를 검색합니다.</p>
-    </div>
-    <a class="button-link" href="/web/documents/new">자료 추가</a>
+<section class="page-title">
+    <h2>학습자료 관리</h2>
+    <p>학습자료를 검색하고 과목 또는 태그별로 확인합니다.</p>
 </section>
 
 <section class="card">
-    <h3>검색</h3>
+    <div class="top-actions">
+        <a href="/web/documents/new" class="button-link">학습자료 추가</a>
+    </div>
+</section>
 
-    <form method="get" action="/web/documents" class="form horizontal">
-        <input type="text" name="q" value="{{ q }}" placeholder="검색어">
+<section class="card">
+    <h3>학습자료 검색</h3>
+
+    <form method="get" action="/web/documents" class="search-form">
+        <input type="text" name="q" value="{{ q }}" placeholder="제목, 내용, 태그 검색">
 
         <select name="course_id">
             <option value="">전체 과목</option>
+
             {% for course in courses %}
-                <option value="{{ course.id }}"
-                    {% if selected_course_id == course.id %}selected{% endif %}
-                >
+                <option value="{{ course.id }}" {% if selected_course_id == course.id %}selected{% endif %}>
                     {{ course.name }}
                 </option>
             {% endfor %}
         </select>
 
+        <input type="text" name="tag" value="{{ selected_tag }}" placeholder="태그 검색 예: 시험">
+
         <button type="submit">검색</button>
+        <a href="/web/documents" class="button-link">초기화</a>
     </form>
+
+    {% if all_tags %}
+        <div class="tag-list">
+            <span class="muted">태그:</span>
+
+            {% for tag in all_tags %}
+                <a href="/web/documents?tag={{ tag }}" class="tag-chip">
+                    #{{ tag }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
 </section>
 
 <section class="card">
-    <h3>자료 목록</h3>
+    <h3>학습자료 목록</h3>
 
     {% if documents %}
         <ul class="item-list">
             {% for document in documents %}
                 <li>
                     <div>
-                        <a href="/web/documents/{{ document.id }}">
-                            <strong>{{ document.title }}</strong>
-                        </a>
+                        <strong>
+                            <a href="/web/documents/{{ document.id }}">
+                                {{ document.title }}
+                            </a>
+                        </strong>
+
                         <p class="muted">
-                            과목 ID: {{ document.course_id }}
-                            {% if document.tags %}
-                                · {{ document.tags }}
+                            과목:
+                            {% if document.course %}
+                                {{ document.course.name }}
+                            {% else %}
+                                알 수 없음
                             {% endif %}
                         </p>
+
+                        {% if document.tags %}
+                            <p>
+                                {% for tag in document.tags.split(",") %}
+                                    <a href="/web/documents?tag={{ tag.strip() }}" class="tag-chip">
+                                        #{{ tag.strip() }}
+                                    </a>
+                                {% endfor %}
+                            </p>
+                        {% else %}
+                            <p class="muted">태그가 없습니다.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="actions">
+                        <a href="/web/documents/{{ document.id }}" class="button-link">보기</a>
+                        <a href="/web/documents/{{ document.id }}/edit" class="button-link">수정</a>
+
+                        <form method="post" action="/web/documents/{{ document.id }}/delete">
+                            <button type="submit" onclick="return confirm('이 학습자료를 삭제할까요?')">
+                                삭제
+                            </button>
+                        </form>
                     </div>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p class="muted">검색 결과 또는 등록된 자료가 없습니다.</p>
+        <p class="muted">조건에 맞는 학습자료가 없습니다.</p>
     {% endif %}
 </section>
 {% endblock %}

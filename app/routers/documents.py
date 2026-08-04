@@ -51,6 +51,7 @@ def read_documents(
     current_user: CurrentUser,
     q: str | None = Query(default=None),
     course_id: int | None = Query(default=None),
+    tag: str | None = Query(default=None),
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=10, ge=1, le=100),
 ):
@@ -59,6 +60,7 @@ def read_documents(
         user_id=current_user.id,
         q=q,
         course_id=course_id,
+        tag=tag,
         skip=skip,
         limit=limit,
     )

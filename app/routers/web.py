@@ -183,6 +183,7 @@ def document_list(
     db: DbSession,
     q: str | None = None,
     course_id: str | None = None,
+    tag: str | None = None,
 ):
     current_user = require_web_user(
         request=request,
@@ -197,6 +198,11 @@ def document_list(
     if course_id not in (None, ""):
         selected_course_id = int(course_id)
 
+    selected_tag = None
+
+    if tag is not None and tag.strip():
+        selected_tag = tag.strip().lstrip("#")
+
     courses = course_service.get_courses(
         db=db,
         user_id=current_user.id,
@@ -207,7 +213,12 @@ def document_list(
         user_id=current_user.id,
         q=q,
         course_id=selected_course_id,
+        tag=selected_tag,
         limit=100,
+    )
+    all_tags = document_service.get_all_tags(
+        db=db,
+        user_id=current_user.id,
     )
 
     return templates.TemplateResponse(
@@ -218,6 +229,8 @@ def document_list(
             "courses": courses,
             "q": q or "",
             "selected_course_id": selected_course_id,
+            "selected_tag": selected_tag or "",
+            "all_tags": all_tags,
             "current_user": current_user,
         },
     )

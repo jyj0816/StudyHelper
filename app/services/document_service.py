@@ -5,6 +5,26 @@ from app.models import Course, Document
 from app.schemas.document import DocumentCreate, DocumentUpdate
 
 
+def normalize_tags(
+    tags: str | None,
+) -> str | None:
+    if tags is None:
+        return None
+
+    tag_items = [
+        tag.strip().lstrip("#")
+        for tag in tags.split(",")
+        if tag.strip()
+    ]
+
+    if not tag_items:
+        return None
+
+    unique_tags = sorted(set(tag_items))
+
+    return ", ".join(unique_tags)
+
+
 def create_document(
     db: Session,
     document: DocumentCreate,
@@ -23,7 +43,7 @@ def create_document(
     new_document = Document(
         title=document.title,
         content=document.content,
-        tags=document.tags,
+        tags=normalize_tags(document.tags),
         course_id=document.course_id,
         user_id=user_id,
     )
@@ -40,6 +60,7 @@ def get_documents(
     user_id: int,
     q: str | None = None,
     course_id: int | None = None,
+    tag: str | None = None,
     skip: int = 0,
     limit: int = 10,
 ) -> list[Document]:
@@ -52,8 +73,15 @@ def get_documents(
             Document.course_id == course_id,
         )
 
-    if q is not None:
-        keyword = f"%{q}%"
+    if tag is not None and tag.strip():
+        keyword = f"%{tag.strip().lstrip('#')}%"
+
+        statement = statement.where(
+            Document.tags.like(keyword)
+        )
+
+    if q is not None and q.strip():
+        keyword = f"%{q.strip()}%"
 
         statement = statement.where(
             Document.title.like(keyword)
@@ -69,6 +97,32 @@ def get_documents(
     )
 
     return list(db.scalars(statement).all())
+
+
+def get_all_tags(
+    db: Session,
+    user_id: int,
+) -> list[str]:
+    documents = db.scalars(
+        select(Document).where(
+            Document.user_id == user_id,
+            Document.tags.is_not(None),
+        )
+    ).all()
+
+    tags: set[str] = set()
+
+    for document in documents:
+        if document.tags is None:
+            continue
+
+        for tag in document.tags.split(","):
+            cleaned_tag = tag.strip()
+
+            if cleaned_tag:
+                tags.add(cleaned_tag)
+
+    return sorted(tags)
 
 
 def get_document_by_id(
@@ -116,6 +170,9 @@ def update_document(
 
         if course is None:
             raise ValueError("존재하지 않는 과목입니다.")
+
+    if "tags" in update_data:
+        update_data["tags"] = normalize_tags(update_data["tags"])
 
     for field, value in update_data.items():
         setattr(document, field, value)

@@ -204,3 +204,30 @@ button.danger {
     gap: 8px;
     align-items: center;
 }
+
+.top-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.tag-list {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.tag-chip {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    color: #374151;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.tag-chip:hover {
+    background: #d1d5db;
+}
