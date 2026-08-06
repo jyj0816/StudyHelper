@@ -30,6 +30,7 @@ StudyHelper는 학습자료를 한곳에 모아 저장하고, 과목별 분류�
 - 학습자료 태그 정규화
 - 태그별 학습자료 필터링
 - 학습자료 검색 기능 개선
+- 학습자료 기반 간단한 빈칸 퀴즈 생성
 
 ## 향후 구현 예정 기능
 
@@ -169,6 +170,10 @@ http://127.0.0.1:8000/docs
 - 태그별 학습자료 필터링 구현 완료
 - 학습자료 검색 기능 개선 완료
 - 학습자료 검색/태그 테스트 작성 완료
+- 학습자료 기반 빈칸 퀴즈 생성 기능 구현 완료
+- 퀴즈 생성 API 구현 완료
+- 퀴즈 생성 웹 화면 구현 완료
+- 퀴즈 생성 기능 테스트 작성 완료
 
 ## 프로젝트 구조
 
@@ -193,11 +198,13 @@ app/
 ├─ schemas/
 │  ├─ user.py
 │  ├─ course.py
-│  └─ document.py
+│  ├─ document.py
+│  └─ quiz.py
 ├─ services/
 │  ├─ user_service.py
 │  ├─ course_service.py
-│  └─ document_service.py
+│  ├─ document_service.py
+│  └─ quiz_service.py
 ├─ templates/
 │  ├─ base.html
 │  ├─ dashboard.html
@@ -211,7 +218,8 @@ app/
 │     ├─ list.html
 │     ├─ new.html
 │     ├─ detail.html
-│     └─ edit.html
+│     ├─ edit.html
+│     └─ quiz.html
 └─ static/
    └─ css/
       └─ style.css
@@ -224,7 +232,8 @@ tests/
 ├─ test_auth.py
 ├─ test_course_isolation.py
 ├─ test_course_edit_web.py
-└─ test_document_search_tags.py      
+├─ test_document_search_tags.py      
+└─ test_document_quiz.py
 ```
 
 ## 브랜치 전략
@@ -279,6 +288,9 @@ pytest를 사용해 주요 기능을 검증
 - 학습자료 태그 필터 테스트
 - 학습자료 웹 화면 태그 링크 표시 테스트
 - 학습자료 웹 화면 태그 필터 테스트
+- 학습자료 퀴즈 생성 API 테스트
+- 학습자료 퀴즈 생성 웹 화면 테스트
+- 다른 사용자의 학습자료 퀴즈 생성 차단 테스트
 
 테스트 실행:
 
