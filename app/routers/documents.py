@@ -7,7 +7,8 @@ from app.database import get_db
 from app.dependencies.auth import require_current_user
 from app.models import User
 from app.schemas.document import DocumentCreate, DocumentResponse, DocumentUpdate
-from app.services import document_service
+from app.schemas.quiz import QuizQuestionResponse
+from app.services import document_service, quiz_service
 
 
 router = APIRouter(
@@ -63,6 +64,32 @@ def read_documents(
         tag=tag,
         skip=skip,
         limit=limit,
+    )
+
+
+@router.get(
+    "/{document_id}/quiz",
+    response_model=list[QuizQuestionResponse],
+)
+def generate_document_quiz(
+    document_id: int,
+    db: DbSession,
+    current_user: CurrentUser,
+):
+    document = document_service.get_document_by_id(
+        db=db,
+        document_id=document_id,
+        user_id=current_user.id,
+    )
+
+    if document is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="학습자료를 찾을 수 없습니다.",
+        )
+
+    return quiz_service.generate_quiz_from_document(
+        document=document,
     )
 
 

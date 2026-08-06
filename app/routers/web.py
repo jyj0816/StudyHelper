@@ -11,7 +11,7 @@ from app.dependencies.auth import get_current_user
 from app.models import User
 from app.schemas.course import CourseCreate, CourseUpdate
 from app.schemas.document import DocumentCreate, DocumentUpdate
-from app.services import course_service, document_service
+from app.services import course_service, document_service, quiz_service
 
 
 router = APIRouter(
@@ -487,6 +487,48 @@ def document_detail(
         },
     )
 
+@router.get(
+    "/web/documents/{document_id}/quiz",
+    response_class=HTMLResponse,
+)
+def document_quiz_page(
+    document_id: int,
+    request: Request,
+    db: DbSession,
+):
+    current_user = require_web_user(
+        request=request,
+        db=db,
+    )
+
+    if isinstance(current_user, RedirectResponse):
+        return current_user
+
+    document = document_service.get_document_by_id(
+        db=db,
+        document_id=document_id,
+        user_id=current_user.id,
+    )
+
+    if document is None:
+        return RedirectResponse(
+            url="/web/documents",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    questions = quiz_service.generate_quiz_from_document(
+        document=document,
+    )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="documents/quiz.html",
+        context={
+            "document": document,
+            "questions": questions,
+            "current_user": current_user,
+        },
+    )
 
 @router.get(
     "/web/documents/{document_id}/edit",

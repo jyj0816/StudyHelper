@@ -231,3 +231,20 @@ button.danger {
 .tag-chip:hover {
     background: #d1d5db;
 }
+
+.quiz-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.quiz-list li {
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.document-content {
+    white-space: pre-wrap;
+    line-height: 1.7;
+}

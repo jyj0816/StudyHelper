@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}퀴즈 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>자동 생성 퀴즈</h2>
+    <p>{{ document.title }} 학습자료를 기반으로 만든 빈칸 퀴즈입니다.</p>
+</section>
+
+<section class="card">
+    <div class="actions">
+        <a href="/web/documents/{{ document.id }}" class="button-link">학습자료로 돌아가기</a>
+        <a href="/web/documents" class="button-link">목록으로</a>
+    </div>
+</section>
+
+<section class="card">
+    <h3>퀴즈 목록</h3>
+
+    {% if questions %}
+        <ol class="quiz-list">
+            {% for quiz in questions %}
+                <li>
+                    <p><strong>문제:</strong> {{ quiz.question }}</p>
+
+                    <details>
+                        <summary>정답 보기</summary>
+                        <p><strong>정답:</strong> {{ quiz.answer }}</p>
+                        <p class="muted">원문: {{ quiz.source_sentence }}</p>
+                    </details>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p class="muted">
+            생성할 수 있는 퀴즈가 없습니다. 학습자료 내용을 더 길게 작성해보세요.
+        </p>
+    {% endif %}
+</section>
+{% endblock %}
