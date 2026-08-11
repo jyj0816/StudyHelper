@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.database import Base, engine
-from app.models import Course, Document, User
+from app.models import Course, Document, QuizAttempt, User
 from app.routers.auth import router as auth_router
 from app.routers.courses import router as courses_router
 from app.routers.documents import router as documents_router
@@ -14,6 +14,7 @@ from app.routers.web import router as web_router
 
 _ = Course
 _ = Document
+_ = QuizAttempt
 _ = User
 
 Base.metadata.create_all(bind=engine)
