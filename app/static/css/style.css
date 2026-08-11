@@ -248,3 +248,12 @@ button.danger {
     white-space: pre-wrap;
     line-height: 1.7;
 }
+
+.success-message {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+}

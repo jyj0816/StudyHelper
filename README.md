@@ -31,6 +31,9 @@ StudyHelper는 학습자료를 한곳에 모아 저장하고, 과목별 분류�
 - 태그별 학습자료 필터링
 - 학습자료 검색 기능 개선
 - 학습자료 기반 간단한 빈칸 퀴즈 생성
+- 퀴즈 답안 제출 및 자동 채점
+- 퀴즈 풀이 결과 저장
+- 오답노트
 
 ## 향후 구현 예정 기능
 
@@ -174,6 +177,11 @@ http://127.0.0.1:8000/docs
 - 퀴즈 생성 API 구현 완료
 - 퀴즈 생성 웹 화면 구현 완료
 - 퀴즈 생성 기능 테스트 작성 완료
+- 퀴즈 답안 제출 기능 구현 완료
+- 퀴즈 자동 채점 기능 구현 완료
+- 퀴즈 풀이 결과 저장 기능 구현 완료
+- 오답노트 웹 화면 구현 완료
+- 퀴즈 풀이 기록 테스트 작성 완료
 
 ## 프로젝트 구조
 
@@ -189,7 +197,8 @@ app/
 │  ├─ __init__.py
 │  ├─ user.py
 │  ├─ course.py
-│  └─ document.py
+│  ├─ document.py
+│  └─ quiz_attempt.py
 ├─ routers/
 │  ├─ auth.py
 │  ├─ courses.py
@@ -208,6 +217,7 @@ app/
 ├─ templates/
 │  ├─ base.html
 │  ├─ dashboard.html
+│  ├─ wrong_notes.html
 │  ├─ auth/
 │  │  ├─ login.html
 │  │  └─ register.html
@@ -219,7 +229,8 @@ app/
 │     ├─ new.html
 │     ├─ detail.html
 │     ├─ edit.html
-│     └─ quiz.html
+│     ├─ quiz.html
+│     └─ quiz_result.html
 └─ static/
    └─ css/
       └─ style.css
@@ -233,7 +244,8 @@ tests/
 ├─ test_course_isolation.py
 ├─ test_course_edit_web.py
 ├─ test_document_search_tags.py      
-└─ test_document_quiz.py
+├─ test_document_quiz.py
+└─ test_quiz_attempts.py
 ```
 
 ## 브랜치 전략
@@ -291,6 +303,11 @@ pytest를 사용해 주요 기능을 검증
 - 학습자료 퀴즈 생성 API 테스트
 - 학습자료 퀴즈 생성 웹 화면 테스트
 - 다른 사용자의 학습자료 퀴즈 생성 차단 테스트
+- 퀴즈 답안 제출 API 테스트
+- 퀴즈 정답 판정 테스트
+- 퀴즈 오답 판정 테스트
+- 오답노트 API 테스트
+- 오답노트 웹 화면 테스트
 
 테스트 실행:
 

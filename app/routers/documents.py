@@ -7,7 +7,11 @@ from app.database import get_db
 from app.dependencies.auth import require_current_user
 from app.models import User
 from app.schemas.document import DocumentCreate, DocumentResponse, DocumentUpdate
-from app.schemas.quiz import QuizQuestionResponse
+from app.schemas.quiz import (
+    QuizAttemptResponse,
+    QuizQuestionResponse,
+    QuizSubmitRequest,
+)
 from app.services import document_service, quiz_service
 
 
@@ -90,6 +94,50 @@ def generate_document_quiz(
 
     return quiz_service.generate_quiz_from_document(
         document=document,
+    )
+
+@router.post(
+    "/{document_id}/quiz/submit",
+    response_model=list[QuizAttemptResponse],
+)
+def submit_document_quiz(
+    document_id: int,
+    quiz_submit: QuizSubmitRequest,
+    db: DbSession,
+    current_user: CurrentUser,
+):
+    document = document_service.get_document_by_id(
+        db=db,
+        document_id=document_id,
+        user_id=current_user.id,
+    )
+
+    if document is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="학습자료를 찾을 수 없습니다.",
+        )
+
+    return quiz_service.submit_quiz_answers(
+        db=db,
+        document=document,
+        user_id=current_user.id,
+        answers=quiz_submit.answers,
+    )
+
+
+@router.get(
+    "/quiz/wrong-notes",
+    response_model=list[QuizAttemptResponse],
+)
+def read_wrong_notes(
+    db: DbSession,
+    current_user: CurrentUser,
+):
+    return quiz_service.get_quiz_attempts(
+        db=db,
+        user_id=current_user.id,
+        only_wrong=True,
     )
 
 

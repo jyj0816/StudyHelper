@@ -530,6 +530,103 @@ def document_quiz_page(
         },
     )
 
+@router.post(
+    "/web/documents/{document_id}/quiz/submit",
+)
+def submit_document_quiz_from_web(
+    document_id: int,
+    request: Request,
+    db: DbSession,
+    question: Annotated[list[str], Form()],
+    answer: Annotated[list[str], Form()],
+    source_sentence: Annotated[list[str], Form()],
+    user_answer: Annotated[list[str], Form()],
+):
+    current_user = require_web_user(
+        request=request,
+        db=db,
+    )
+
+    if isinstance(current_user, RedirectResponse):
+        return current_user
+
+    document = document_service.get_document_by_id(
+        db=db,
+        document_id=document_id,
+        user_id=current_user.id,
+    )
+
+    if document is None:
+        return RedirectResponse(
+            url="/web/documents",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    from app.schemas.quiz import QuizSubmitItem
+
+    answers = [
+        QuizSubmitItem(
+            question=question_item,
+            answer=answer_item,
+            source_sentence=source_sentence_item,
+            user_answer=user_answer_item,
+        )
+        for question_item, answer_item, source_sentence_item, user_answer_item in zip(
+            question,
+            answer,
+            source_sentence,
+            user_answer,
+        )
+    ]
+
+    attempts = quiz_service.submit_quiz_answers(
+        db=db,
+        document=document,
+        user_id=current_user.id,
+        answers=answers,
+    )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="documents/quiz_result.html",
+        context={
+            "document": document,
+            "attempts": attempts,
+            "current_user": current_user,
+        },
+    )
+
+@router.get(
+    "/web/wrong-notes",
+    response_class=HTMLResponse,
+)
+def wrong_notes_page(
+    request: Request,
+    db: DbSession,
+):
+    current_user = require_web_user(
+        request=request,
+        db=db,
+    )
+
+    if isinstance(current_user, RedirectResponse):
+        return current_user
+
+    attempts = quiz_service.get_quiz_attempts(
+        db=db,
+        user_id=current_user.id,
+        only_wrong=True,
+    )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="wrong_notes.html",
+        context={
+            "attempts": attempts,
+            "current_user": current_user,
+        },
+    )
+
 @router.get(
     "/web/documents/{document_id}/edit",
     response_class=HTMLResponse,

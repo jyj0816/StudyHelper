@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}오답노트 - StudyHelper{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h2>오답노트</h2>
+    <p>틀린 퀴즈 문제를 다시 확인합니다.</p>
+</section>
+
+<section class="card">
+    <h3>틀린 문제 목록</h3>
+
+    {% if attempts %}
+        <ol class="quiz-list">
+            {% for attempt in attempts %}
+                <li>
+                    <p><strong>문제:</strong> {{ attempt.question }}</p>
+                    <p><strong>내 답:</strong> {{ attempt.user_answer }}</p>
+                    <p><strong>정답:</strong> {{ attempt.answer }}</p>
+                    <p class="muted">원문: {{ attempt.source_sentence }}</p>
+
+                    <a href="/web/documents/{{ attempt.document_id }}" class="button-link">
+                        학습자료 보기
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p class="muted">아직 오답이 없습니다.</p>
+    {% endif %}
+</section>
+{% endblock %}

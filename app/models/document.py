@@ -64,3 +64,9 @@ class Document(Base):
         "User",
         back_populates="documents",
     )
+
+    quiz_attempts = relationship(
+        "QuizAttempt",
+        back_populates="document",
+        cascade="all, delete-orphan",
+    )

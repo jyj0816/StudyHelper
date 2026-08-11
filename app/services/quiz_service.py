@@ -1,6 +1,10 @@
 import re
 
-from app.models import Document
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.models import Document, QuizAttempt
+from app.schemas.quiz import QuizSubmitItem
 
 
 STOPWORDS = {
@@ -120,3 +124,76 @@ def generate_quiz_from_document(
         )
 
     return questions
+
+
+def normalize_answer(
+    answer: str,
+) -> str:
+    return answer.strip().casefold().replace(" ", "")
+
+
+def is_correct_answer(
+    user_answer: str,
+    correct_answer: str,
+) -> bool:
+    return normalize_answer(user_answer) == normalize_answer(correct_answer)
+
+
+def submit_quiz_answers(
+    db: Session,
+    document: Document,
+    user_id: int,
+    answers: list[QuizSubmitItem],
+) -> list[QuizAttempt]:
+    attempts: list[QuizAttempt] = []
+
+    for answer_item in answers:
+        attempt = QuizAttempt(
+            user_id=user_id,
+            document_id=document.id,
+            question=answer_item.question,
+            answer=answer_item.answer,
+            user_answer=answer_item.user_answer,
+            is_correct=is_correct_answer(
+                user_answer=answer_item.user_answer,
+                correct_answer=answer_item.answer,
+            ),
+            source_sentence=answer_item.source_sentence,
+        )
+
+        db.add(attempt)
+        attempts.append(attempt)
+
+    db.commit()
+
+    for attempt in attempts:
+        db.refresh(attempt)
+
+    return attempts
+
+
+def get_quiz_attempts(
+    db: Session,
+    user_id: int,
+    document_id: int | None = None,
+    only_wrong: bool = False,
+) -> list[QuizAttempt]:
+    statement = select(QuizAttempt).where(
+        QuizAttempt.user_id == user_id,
+    )
+
+    if document_id is not None:
+        statement = statement.where(
+            QuizAttempt.document_id == document_id,
+        )
+
+    if only_wrong:
+        statement = statement.where(
+            QuizAttempt.is_correct.is_(False),
+        )
+
+    statement = statement.order_by(
+        QuizAttempt.id.desc(),
+    )
+
+    return list(db.scalars(statement).all())
